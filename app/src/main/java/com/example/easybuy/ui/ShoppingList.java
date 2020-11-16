@@ -3,6 +3,7 @@ package com.example.easybuy.ui;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.adapter.ShoppingListAdapter;
+import com.example.easybuy.ui.helper.MyItemTouchHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
+import static androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags;
 
 public class ShoppingList extends AppCompatActivity {
     private int REQUEST_CODE_NEW_PRODUCT = 1;
@@ -58,9 +61,30 @@ public class ShoppingList extends AppCompatActivity {
     private void configureRecycler() {
         recyclerView = findViewById(R.id.recyclerShoppingList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ShoppingListAdapter(getApplicationContext(), productsList);
+        adapter = new ShoppingListAdapter(this, productsList);
+
+        ItemTouchHelper.Callback callback = new MyItemTouchHelper(adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        adapter.setTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         recyclerView.setAdapter(adapter);
     }
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Products products = productsList.get(viewHolder.getAdapterPosition());
+                db.collection("Shopping List").document(products.getId()).delete();
+                productsList.remove(viewHolder.getAdapterPosition());
+                adapter.notifyDataSetChanged();
+            }
+        };
 
     private void buttonClick() {
         fabShoppingList = findViewById(R.id.fabShoppingList);
@@ -79,27 +103,8 @@ public class ShoppingList extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_NEW_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_NEW_PRODUCT)){
             Products products = (Products)data.getSerializableExtra(KEY_NEW_PRODUCT);
-            Map<String, Object> user = new HashMap<>();
-            user.put("Title", products.getTitle());
-            user.put("Product", products.getProduct());
-            user.put("Description", products.getDescription());
-            user.put("Quantify", products.getQuantify());
-            user.put("Price", products.getPrice());
 
-            db.collection("Shopping List")
-                    .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Toast.makeText(ShoppingList.this, "Success", LENGTH_SHORT);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error adding document", e);
-                        }
-                    });
+            db.collection("Shopping List").add(products);
             loadData();
         }else if(requestCode == REQUEST_CODE_EDIT_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_EDIT_PRODUCT)){
             Products products = (Products) data.getSerializableExtra(KEY_EDIT_PRODUCT);
@@ -127,5 +132,11 @@ public class ShoppingList extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void ProductsListener(int position){
+        Intent intent = new Intent(ShoppingList.this, CreateAndEditList.class);
+        intent.putExtra("posicao", position);
+        startActivityForResult(intent, REQUEST_CODE_EDIT_PRODUCT);
     }
 }
