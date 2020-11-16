@@ -7,7 +7,7 @@
     tools:context=".ui.adapter.ShoppingListAdapter">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewShoppingList"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"

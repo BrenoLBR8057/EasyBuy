@@ -3,7 +3,7 @@ package com.example.easybuy.model;
 import java.io.Serializable;
 
 public class Products implements Serializable {
-    private int id;
+    private String id;
     private String title;
     private String product;
     private String description;
@@ -20,7 +20,7 @@ public class Products implements Serializable {
 
     public Products(){}
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -44,7 +44,7 @@ public class Products implements Serializable {
         return product;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

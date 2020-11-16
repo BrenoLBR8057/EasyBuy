@@ -9,18 +9,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.ShoppingList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> {
     private List<Products> productsList;
     private Context context;
 
-    ShoppingListAdapter(Context context, List<Products> productsList){
+    public ShoppingListAdapter(Context context, List<Products> productsList){
         this.context = context;
         this.productsList = productsList;
     }
@@ -34,7 +36,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ShoppingListAdapter.ViewHolder holder, int position) {
-
+        Products products = productsList.get(position);
+        holder.linkProduct(products);
     }
 
     @Override
@@ -43,8 +46,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView shoppingList;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            shoppingList = itemView.findViewById(R.id.textViewShoppingList);
+        }
+
+        public void linkProduct(Products products){
+            shoppingList.setText(products.getTitle());
         }
     }
 }
