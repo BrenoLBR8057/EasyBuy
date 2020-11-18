@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyBuy">
-        <activity android:name=".ui.adapter.ShoppingListAdapter"></activity>
+        <activity android:name=".ui.adapter.ProductsListAdapter"></activity>
+        <activity android:name=".ui.adapter.ShoppingListAdapter" />
         <activity android:name=".ui.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +20,7 @@
         </activity>
         <activity android:name=".ui.CreateAndEditList" />
         <activity android:name=".ui.ProductsList" />
-        <activity android:name=".ui.ShoppingList"></activity>
+        <activity android:name=".ui.ShoppingList" />
     </application>
 
 </manifest>

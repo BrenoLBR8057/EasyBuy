@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.easybuy.ui.ShoppingList;
+import com.example.easybuy.ui.adapter.ShoppingListAdapter;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 
 public class MyItemTouchHelper extends ItemTouchHelper.Callback {
@@ -26,9 +28,13 @@ public class MyItemTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-        final int dragFlags = ItemTouchHelper.DOWN | ItemTouchHelper.UP;
-        final int swipeFlags = ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT;
-        return makeMovementFlags(dragFlags, swipeFlags);
+        return getFlags();
+    }
+
+    private int getFlags(){
+        final int swipe = ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT;
+        final int drag = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+        return makeMovementFlags(drag, swipe);
     }
 
     @Override

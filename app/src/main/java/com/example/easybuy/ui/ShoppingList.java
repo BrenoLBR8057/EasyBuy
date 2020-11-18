@@ -22,10 +22,14 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +46,7 @@ public class ShoppingList extends AppCompatActivity {
     public static String KEY_EDIT_PRODUCT = "EDIT_PRODUCT";
     private FloatingActionButton fabShoppingList;
     private RecyclerView recyclerView;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String TAG = "TAG";
     private List<Products> productsList;
     private ShoppingListAdapter adapter;
@@ -71,21 +75,6 @@ public class ShoppingList extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Products products = productsList.get(viewHolder.getAdapterPosition());
-                db.collection("Shopping List").document(products.getId()).delete();
-                productsList.remove(viewHolder.getAdapterPosition());
-                adapter.notifyDataSetChanged();
-            }
-        };
-
     private void buttonClick() {
         fabShoppingList = findViewById(R.id.fabShoppingList);
 
@@ -103,13 +92,12 @@ public class ShoppingList extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_NEW_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_NEW_PRODUCT)){
             Products products = (Products)data.getSerializableExtra(KEY_NEW_PRODUCT);
-
             db.collection("Shopping List").add(products);
             loadData();
         }else if(requestCode == REQUEST_CODE_EDIT_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_EDIT_PRODUCT)){
             Products products = (Products) data.getSerializableExtra(KEY_EDIT_PRODUCT);
 
-            db.collection("Shopping List").document(String.valueOf(products.getId())).set(products);
+            db.collection("Shopping List").document(products.getId()).set(products);
             loadData();
         }
     }
@@ -135,8 +123,18 @@ public class ShoppingList extends AppCompatActivity {
     }
 
     public void ProductsListener(int position){
-        Intent intent = new Intent(ShoppingList.this, CreateAndEditList.class);
-        intent.putExtra("posicao", position);
-        startActivityForResult(intent, REQUEST_CODE_EDIT_PRODUCT);
+        db.collection("Shopping List").document(String.valueOf(position)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                Products products = documentSnapshot.toObject(Products.class);
+                products.setId(documentSnapshot.getId());
+
+                Intent intent = new Intent(ShoppingList.this, ProductsList.class);
+                intent.putExtra("Product", products);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
     }
 }

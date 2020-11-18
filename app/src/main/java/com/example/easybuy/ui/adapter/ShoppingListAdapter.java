@@ -1,14 +1,10 @@
 package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,17 +14,20 @@ import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
-import com.example.easybuy.ui.ProductsList;
 import com.example.easybuy.ui.ShoppingList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private List<Products> productsList;
     private Context context;
     private ItemTouchHelper itemTouchHelper;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public ShoppingListAdapter(Context context, List<Products> productsList){
         this.context = context;
@@ -55,15 +54,40 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        Products products = productsList.get(fromPosition);
+        Products spotA = productsList.get(fromPosition);
+        Products spotB = productsList.get(toPosition);
+
+        db.collection("Shopping List").document(spotA.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentA = task.getResult();
+                Products productsA = documentA.toObject(Products.class);
+                productsA.setId(documentA.getId());
+                db.collection("Shopping List").document(spotB.getId()).set(productsA);
+            }
+        });
+
+        db.collection("Shopping List").document(spotB.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentB = task.getResult();
+                Products productsB = documentB.toObject(Products.class);
+                productsB.setId(documentB.getId());
+                db.collection("Shopping List").document(spotA.getId()).set(productsB);
+            }
+        });
+
+        productsList.add(fromPosition, spotB);
+        productsList.add(toPosition, spotA);
         productsList.remove(fromPosition);
-        productsList.add(toPosition, products);
+        productsList.remove(toPosition);
         notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onItemSwiped(int position) {
-        productsList.remove(position);
+        Products products = productsList.remove(position);
+        db.collection("Shopping List").document(products.getId()).delete();
         notifyItemRemoved(position);
     }
 
@@ -71,10 +95,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         this.itemTouchHelper = itemTouchHelper;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
         private TextView shoppingList;
         GestureDetector gestureDetector;
-        ShoppingList actShoppingList;
+        ShoppingList actShoppingList = new ShoppingList();
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             shoppingList = itemView.findViewById(R.id.textViewShoppingList);
@@ -98,7 +122,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            actShoppingList.ProductsListener(getAdapterPosition());
             return false;
         }
 
@@ -121,6 +144,16 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         public boolean onTouch(View v, MotionEvent event) {
             gestureDetector.onTouchEvent(event);
             return true;
+        }
+
+        @Override
+        public void onClick(View v) {
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    actShoppingList.ProductsListener(getAdapterPosition());
+                }
+            });
         }
     }
 }
