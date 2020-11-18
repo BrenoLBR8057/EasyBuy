@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/novaLista"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NovaListaFragment">
+
+    <com.google.android.material.tabs.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabTextColor="#141413">
+
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabLista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lista" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Novas Listas" />
+
+    </com.google.android.material.tabs.TabLayout>
+</FrameLayout>
