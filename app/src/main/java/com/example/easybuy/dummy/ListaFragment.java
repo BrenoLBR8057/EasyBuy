@@ -15,15 +15,6 @@ import com.example.easybuy.R;
 
 public class ListaFragment extends Fragment {
 
-//    // TODO: Rename parameter arguments, choose names that match
-//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-
     public ListaFragment() {
         // Required empty public constructor
     }
@@ -39,7 +30,7 @@ public class ListaFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lista, container, false);
-        Button button = view.findViewById(R.id.buttonLista);
+        Button button = view.findViewById(R.id.fabSalvaList);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

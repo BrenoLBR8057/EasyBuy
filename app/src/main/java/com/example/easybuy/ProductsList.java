@@ -4,13 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.easybuy.dummy.ListaFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class ProductsList extends AppCompatActivity {
-    private Button buttonLista;
-    private Button buttonSalva;
+    private Button btnSaveList;
+    private FloatingActionButton fabSalvaList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,23 +26,23 @@ public class ProductsList extends AppCompatActivity {
     }
 
     private void clickButton() {
-        buttonLista = findViewById(R.id.buttonLista);
-        buttonSalva = findViewById(R.id.buttonSalva);
+        btnSaveList = findViewById(R.id.btnSaveList);
+        fabSalvaList = findViewById(R.id.fabSalvaList);
 
-        buttonLista.setOnClickListener(new View.OnClickListener() {
+        btnSaveList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Lista lista = new Lista();
-                trocaLista(lista);
+                ListaFragment listaFragment = new ListaFragment();
+
             }
-
-
         });
-        buttonSalva.setOnClickListener(new View.OnClickListener() {
+
+        fabSalvaList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Salva salva = new Salva();
-                trocaSalva(salva);
+                FabSalvaList fabSalvaList = new FabSalvaList();
+
+
             }
 
             private void trocaSalva(Salva salva) {
@@ -55,7 +60,4 @@ public class ProductsList extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, lista);
         transaction.commit();
     }
-}
-
-        }
 }
