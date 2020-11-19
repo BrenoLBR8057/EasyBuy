@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,6 +51,9 @@ public class ShoppingList extends AppCompatActivity {
     private String TAG = "TAG";
     private List<Products> productsList;
     private ShoppingListAdapter adapter;
+    private String uid = FirebaseAuth.getInstance().getUid();
+    private String COLLECTION = uid;
+    private String DOCUMENT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,25 +96,32 @@ public class ShoppingList extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_NEW_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_NEW_PRODUCT)){
             Products products = (Products)data.getSerializableExtra(KEY_NEW_PRODUCT);
-            db.collection("Shopping List").add(products);
+            DOCUMENT = products.getTitle();
+            Map<String, Object> user = new HashMap<>();
+            user.put("Title", products.getTitle());
+            user.put("Product", products.getProduct());
+            user.put("Quantify", products.getQuantify());
+            user.put("Price", products.getPrice());
+
+            db.collection(COLLECTION).document(DOCUMENT).set(user);
             loadData();
         }else if(requestCode == REQUEST_CODE_EDIT_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_EDIT_PRODUCT)){
             Products products = (Products) data.getSerializableExtra(KEY_EDIT_PRODUCT);
 
-            db.collection("Shopping List").document(products.getId()).set(products);
+            db.collection(COLLECTION).document(products.getTitle()).set(products);
             loadData();
         }
     }
 
     void loadData(){
-        db.collection("Shopping List").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection(COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete (@NonNull Task< QuerySnapshot > task) {
                 if (task.isSuccessful()) {
                     productsList.clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         Products products = documentSnapshot.toObject(Products.class);
-                        products.setId(documentSnapshot.getId());
+                        products.setTitle(documentSnapshot.getId());
                         productsList.add(products);
                         configureRecycler();
                     }
@@ -124,18 +135,10 @@ public class ShoppingList extends AppCompatActivity {
 
     public void productsListener(int position, List<Products> productsList){
         Products products = productsList.get(position);
-        db.collection("Shopping List").document(String.valueOf(products.getId())).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                DocumentSnapshot documentSnapshot = task.getResult();
-                Products productData = documentSnapshot.toObject(Products.class);
-                productData.setId(documentSnapshot.getId());
+        Intent intent = new Intent(ShoppingList.this, ProductsList.class);
+        intent.putExtra("Product", products.getTitle());
 
-                Intent intent = new Intent(ShoppingList.this, ProductsList.class);
-                intent.putExtra("Product", productData);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
     }
 }

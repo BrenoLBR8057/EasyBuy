@@ -18,6 +18,8 @@ import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.adapter.ProductsListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -27,17 +29,18 @@ import java.util.List;
 
 public class ProductsList extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private EditText product;
+    private EditText newProduct;
     private EditText quantify;
     private EditText price;
     private boolean isEdition;
-    private EditText newProduct;
     private Button save;
     ShoppingList db;
     List<Products> productsList;
     private String TAG = "TAG";
     private ProductsListAdapter adapter;
-    private ShoppingList shoppingList;
+    private String auth = FirebaseAuth.getInstance().getUid();
+    private String COLLECTION = auth;
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,25 +82,33 @@ public class ProductsList extends AppCompatActivity {
                 Double price2 = Double.parseDouble(price.getText().toString());
                 Products products = new Products(product, quantify2, price2);
 
-                Intent intent = getIntent();
-                String id = String.valueOf(intent.getIntExtra("position", 0));
-                db.db.collection("Shopping List").document(id).update("Product", products);
+                db.db.collection(products.getTitle()).document(products.getProduct()).update("Product", products);
             }
         });
     }
 
     private void loadFields() {
         recyclerView = findViewById(R.id.recyclerProductsList);
-        newProduct = findViewById(R.id.editTextNewProduct);
+        newProduct = findViewById(R.id.editTextProductProductstList);
         save = findViewById(R.id.btnSave);
-        price = findViewById(R.id.editTextPriceProductList);
-        quantify = findViewById(R.id.editTextQuantifyProductList);
+        price = findViewById(R.id.editTextPriceProductsList);
+        quantify = findViewById(R.id.editTextQuantifyProductsList);
     }
 
     private void generateProducts(){
         Intent intent = getIntent();
         Products products = (Products) intent.getSerializableExtra("Product");
-        productsList.add(products);
-        configureRecycler();
+        db.db.collection(COLLECTION).document(products.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                Products products1 = documentSnapshot.toObject(Products.class);
+
+                newProduct.setText(products.getTitle());
+                price.setText(products.getPrice().toString());
+                quantify.setText(products.getQuantify());
+                configureRecycler();
+            }
+        });
     }
 }

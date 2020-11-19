@@ -11,12 +11,12 @@ import android.widget.EditText;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 
+import static com.example.easybuy.ui.ShoppingList.KEY_EDIT_PRODUCT;
 import static com.example.easybuy.ui.ShoppingList.KEY_NEW_PRODUCT;
 
 public class CreateAndEditList extends AppCompatActivity {
     private EditText title;
     private EditText product;
-    private EditText description;
     private EditText quantify;
     private EditText price;
     private Button btnSave;
@@ -34,7 +34,6 @@ public class CreateAndEditList extends AppCompatActivity {
 
             title.setText(products.getTitle());
             product.setText(products.getProduct());
-            description.setText(products.getDescription());
             quantify.setText(products.getQuantify());
             price.setText(products.getPrice().toString());
         }
@@ -48,32 +47,35 @@ public class CreateAndEditList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isEditing){
+                    products = getTexts();
+                    Intent intent = new Intent(CreateAndEditList.this, ShoppingList.class);
+                    intent.putExtra(KEY_EDIT_PRODUCT, products);
+                    setResult(RESULT_OK, intent);
+                    finish();
 
                 }else{
-                    Products products = getTexts();
+                    products = getTexts();
                     Intent intent = new Intent(CreateAndEditList.this, ShoppingList.class);
                     intent.putExtra(KEY_NEW_PRODUCT, products);
                     setResult(RESULT_OK, intent);
                     finish();
+                }
             }
-        }
         });
     }
 
     private Products getTexts() {
         String title = this.title.getText().toString();
         String product = this.product.getText().toString();
-        String description = this.description.getText().toString();
         int quantify = Integer.parseInt(this.quantify.getText().toString());
         double price = Double.parseDouble(this.price.getText().toString());
 
-       return new Products(title, product, description, quantify, price);
+       return new Products(title, product, quantify, price);
     }
 
     private void loadFields() {
         title = findViewById(R.id.editTextTitle);
         product = findViewById(R.id.editTextProduct);
-        description = findViewById(R.id.editTextDescription);
         quantify = findViewById(R.id.editTextQuantify);
         price = findViewById(R.id.editTextPrice);
     }

@@ -7,18 +7,6 @@
     tools:context=".ui.CreateAndEditList">
 
     <EditText
-        android:id="@+id/editTextDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Descrição"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/editTextProduct"
-        app:layout_constraintStart_toStartOf="@+id/editTextProduct"
-        app:layout_constraintTop_toBottomOf="@+id/editTextProduct" />
-
-    <EditText
         android:id="@+id/editTextQuantify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,9 +14,9 @@
         android:ems="10"
         android:hint="Quantidade"
         android:inputType="number"
-        app:layout_constraintEnd_toEndOf="@+id/editTextDescription"
-        app:layout_constraintStart_toStartOf="@+id/editTextDescription"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
+        app:layout_constraintEnd_toEndOf="@+id/editTextProduct"
+        app:layout_constraintStart_toStartOf="@+id/editTextProduct"
+        app:layout_constraintTop_toBottomOf="@+id/editTextProduct" />
 
     <EditText
         android:id="@+id/editTextPrice"

@@ -6,12 +6,10 @@ public class Products implements Serializable {
     private String id;
     private String title;
     private String product;
-    private String description;
     private int quantify;
     private Double price;
 
-    public Products(String title, String product, String description, int quantify, double price){
-        this.description = description;
+    public Products(String title, String product, int quantify, double price){
         this.title = title;
         this.product = product;
         this.price = price;
@@ -34,10 +32,6 @@ public class Products implements Serializable {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public Double getPrice() {
         return price;
     }
@@ -56,10 +50,6 @@ public class Products implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setPrice(Double price) {

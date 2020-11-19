@@ -18,6 +18,7 @@ import com.example.easybuy.ui.ShoppingList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -28,6 +29,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     private Context context;
     private ItemTouchHelper itemTouchHelper;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String uid = FirebaseAuth.getInstance().getUid();
+    private String COLLECTION = uid;
 
     public ShoppingListAdapter(Context context, List<Products> productsList){
         this.context = context;
@@ -57,23 +60,23 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         Products spotA = productsList.get(fromPosition);
         Products spotB = productsList.get(toPosition);
 
-        db.collection("Shopping List").document(spotA.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotA.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentA = task.getResult();
                 Products productsA = documentA.toObject(Products.class);
                 productsA.setId(documentA.getId());
-                db.collection("Shopping List").document(spotB.getId()).set(productsA);
+                db.collection(COLLECTION).document(spotB.getTitle()).set(productsA);
             }
         });
 
-        db.collection("Shopping List").document(spotB.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotB.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentB = task.getResult();
                 Products productsB = documentB.toObject(Products.class);
                 productsB.setId(documentB.getId());
-                db.collection("Shopping List").document(spotA.getId()).set(productsB);
+                db.collection(COLLECTION).document(spotA.getTitle()).set(productsB);
             }
         });
 
@@ -87,7 +90,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     @Override
     public void onItemSwiped(int position) {
         Products products = productsList.remove(position);
-        db.collection("Shopping List").document(products.getId()).delete();
+        db.collection(COLLECTION).document(products.getTitle()).delete();
         notifyItemRemoved(position);
     }
 
