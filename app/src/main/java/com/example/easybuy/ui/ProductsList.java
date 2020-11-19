@@ -96,8 +96,8 @@ public class ProductsList extends AppCompatActivity {
 
     private void generateProducts(){
         Intent intent = getIntent();
-        Products product = (Products) intent.getSerializableExtra("Product");
-        productsList.add(product);
+        Products products = (Products) intent.getSerializableExtra("Product");
+        productsList.add(products);
         configureRecycler();
     }
 }

@@ -122,17 +122,18 @@ public class ShoppingList extends AppCompatActivity {
 
     }
 
-    public void ProductsListener(int position){
-        db.collection("Shopping List").document(String.valueOf(position)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    public void productsListener(int position, List<Products> productsList){
+        Products products = productsList.get(position);
+        db.collection("Shopping List").document(String.valueOf(products.getId())).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                 DocumentSnapshot documentSnapshot = task.getResult();
-                Products products = documentSnapshot.toObject(Products.class);
-                products.setId(documentSnapshot.getId());
+                Products productData = documentSnapshot.toObject(Products.class);
+                productData.setId(documentSnapshot.getId());
 
                 Intent intent = new Intent(ShoppingList.this, ProductsList.class);
-                intent.putExtra("Product", products);
-                intent.putExtra("position", position);
+                intent.putExtra("Product", productData);
                 startActivity(intent);
             }
         });

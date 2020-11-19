@@ -122,6 +122,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+            actShoppingList.productsListener(getAdapterPosition(), productsList);
             return false;
         }
 
@@ -148,12 +149,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         @Override
         public void onClick(View v) {
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    actShoppingList.ProductsListener(getAdapterPosition());
-                }
-            });
+
         }
     }
 }
