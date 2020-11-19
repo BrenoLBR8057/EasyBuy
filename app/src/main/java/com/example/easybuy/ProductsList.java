@@ -3,10 +3,12 @@ package com.example.easybuy;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class ProductsList extends AppCompatActivity {
 
@@ -19,15 +21,18 @@ public class ProductsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products_list);
     }
-    private void clickButtons(){
-        btnSaveList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProductsList.this,ProductsList.class);
-                intent.putExtra(PRODUCTS_LIST , productList);
-                setResult(Activity.RESULT_OK, intent);
-            }
-        });
 
+    private void clickButtons(){
+
+             Button button = findViewById(R.id.btnSaveList);
+             btnSaveList.setOnClickListener (new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
+
+                }
+        });
     }
 }
+
