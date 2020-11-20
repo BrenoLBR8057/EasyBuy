@@ -70,8 +70,8 @@ public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapte
 
         public void setProducts(Products products) {
             newProducts.setText(products.getProduct());
-            quantify.setText(products.getQuantify());
-            price.setText(products.getPrice().toString());
+            quantify.setText(String.valueOf(products.getQuantify()));
+            price.setText(String.valueOf(products.getPrice()));
         }
     }
 }

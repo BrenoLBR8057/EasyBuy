@@ -22,9 +22,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.okhttp.internal.DiskLruCache;
 
+import org.w3c.dom.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsList extends AppCompatActivity {
@@ -32,10 +37,11 @@ public class ProductsList extends AppCompatActivity {
     private EditText newProduct;
     private EditText quantify;
     private EditText price;
+    private EditText title;
     private boolean isEdition;
     private Button save;
-    ShoppingList db;
-    List<Products> productsList;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    List<Products> productsList = new ArrayList<>();
     private String TAG = "TAG";
     private ProductsListAdapter adapter;
     private String auth = FirebaseAuth.getInstance().getUid();
@@ -48,8 +54,10 @@ public class ProductsList extends AppCompatActivity {
         setContentView(R.layout.activity_products_list);
         
         loadFields();
-        generateProducts();
+//        generateProducts();
         buttonClick();
+        configureRecycler();
+        getProduct();
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -65,8 +73,8 @@ public class ProductsList extends AppCompatActivity {
         }
     };
 
-
     private void configureRecycler() {
+        recyclerView = findViewById(R.id.recyclerProductsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ProductsListAdapter(getApplicationContext(), productsList);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
@@ -82,32 +90,52 @@ public class ProductsList extends AppCompatActivity {
                 Double price2 = Double.parseDouble(price.getText().toString());
                 Products products = new Products(product, quantify2, price2);
 
-                db.db.collection(products.getTitle()).document(products.getProduct()).update("Product", products);
+                db.collection(products.getTitle()).document(products.getProduct()).update("Product", products);
             }
         });
     }
 
     private void loadFields() {
-        recyclerView = findViewById(R.id.recyclerProductsList);
         newProduct = findViewById(R.id.editTextProductProductstList);
         save = findViewById(R.id.btnSave);
         price = findViewById(R.id.editTextPriceProductsList);
         quantify = findViewById(R.id.editTextQuantifyProductsList);
+        title = findViewById(R.id.editTextTitleProductsList);
     }
 
-    private void generateProducts(){
+//    private void generateProducts(){
+//        Intent intent = getIntent();
+//        Products products = (Products) intent.getSerializableExtra("product");
+//
+//        newProduct.setText(products.getProduct());
+//        title.setText(products.getTitle());
+//        price.setText(products.getPrice().toString());
+//        quantify.setText(products.getQuantify());
+//        configureRecycler();
+//    }
+
+    public void getProduct(){
         Intent intent = getIntent();
-        Products products = (Products) intent.getSerializableExtra("Product");
-        db.db.collection(COLLECTION).document(products.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        Products product = (Products)intent.getSerializableExtra("product");
+        DocumentReference docRef = db.collection(COLLECTION).document(product.getTitle());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                Products products1 = documentSnapshot.toObject(Products.class);
-
-                newProduct.setText(products.getTitle());
-                price.setText(products.getPrice().toString());
-                quantify.setText(products.getQuantify());
-                configureRecycler();
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    configureRecycler();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        QueryDocumentSnapshot documentSnapshot = (QueryDocumentSnapshot) document.getData();
+                        assert documentSnapshot != null;
+                        Products products1 = documentSnapshot.toObject(Products.class);
+                        productsList.add(products1);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
             }
         });
     }

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
+import com.example.easybuy.ui.ProductsList;
 import com.example.easybuy.ui.ShoppingList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +33,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String uid = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = uid;
+    Products products;
 
     public ShoppingListAdapter(Context context, List<Products> productsList){
         this.context = context;
@@ -46,7 +49,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ShoppingListAdapter.ViewHolder holder, int position) {
-        Products products = productsList.get(position);
+        products = productsList.get(position);
         holder.linkProduct(products);
     }
 
@@ -60,7 +63,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         Products spotA = productsList.get(fromPosition);
         Products spotB = productsList.get(toPosition);
 
-        db.collection(COLLECTION).document(spotA.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotA.getProduct()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentA = task.getResult();
@@ -70,7 +73,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             }
         });
 
-        db.collection(COLLECTION).document(spotB.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotB.getProduct()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentB = task.getResult();
@@ -101,7 +104,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
         private TextView shoppingList;
         GestureDetector gestureDetector;
-        ShoppingList actShoppingList = new ShoppingList();
+        ProductsList actProductsList = new ProductsList();
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             shoppingList = itemView.findViewById(R.id.textViewShoppingList);
@@ -125,7 +128,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            actShoppingList.productsListener(getAdapterPosition(), productsList);
+            Products products = productsList.get(getAdapterPosition());
+            Intent intent = new Intent(context, ProductsList.class);
+            intent.putExtra("product", products);
+            context.startActivity(intent);
+
             return false;
         }
 

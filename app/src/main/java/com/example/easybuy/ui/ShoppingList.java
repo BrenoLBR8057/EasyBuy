@@ -11,34 +11,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.adapter.ShoppingListAdapter;
 import com.example.easybuy.ui.helper.MyItemTouchHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentId;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.widget.Toast.LENGTH_SHORT;
-import static androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class ShoppingList extends AppCompatActivity {
     private int REQUEST_CODE_NEW_PRODUCT = 1;
@@ -130,15 +121,5 @@ public class ShoppingList extends AppCompatActivity {
                 }
             }
         });
-
-    }
-
-    public void productsListener(int position, List<Products> productsList){
-        Products products = productsList.get(position);
-
-        Intent intent = new Intent(ShoppingList.this, ProductsList.class);
-        intent.putExtra("Product", products.getTitle());
-
-        startActivity(intent);
     }
 }
