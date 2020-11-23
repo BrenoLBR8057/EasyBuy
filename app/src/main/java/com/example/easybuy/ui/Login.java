@@ -88,7 +88,7 @@ public class Login extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            Intent intent = new Intent(Login.this, ShoppingList.class);
+            Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
         } else {
             Toast.makeText(getApplicationContext(), "Falha ao logar", Toast.LENGTH_SHORT).show();
