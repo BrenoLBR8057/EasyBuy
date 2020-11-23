@@ -35,6 +35,7 @@ public class Login extends AppCompatActivity {
 
         loadFields();
         login();
+        newUser();
     }
 
     private void loadFields() {
@@ -43,6 +44,16 @@ public class Login extends AppCompatActivity {
         forgotPassword = findViewById(R.id.textViewForgotPassword);
         createNewUser = findViewById(R.id.textViewCreateLogin);
         btnEnter = findViewById(R.id.btnEnter);
+    }
+
+    private void newUser(){
+     createNewUser.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             Intent intent = new Intent(Login.this, CreateLogin.class);
+             startActivity(intent);
+         }
+     });
     }
 
     private void login(){
@@ -83,36 +94,6 @@ public class Login extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Falha ao logar", Toast.LENGTH_SHORT).show();
         }
     }
-
-//    private void singNewUser() {
-//        createNewUser.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String getLogin = login.getText().toString();
-//                String getPassword = password.getText().toString();
-//                authentication.createUserWithEmailAndPassword(getLogin, getPassword)
-//                        .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<AuthResult> task) {
-//                                if (task.isSuccessful()) {
-//                                    // Sign in success, update UI with the signed-in user's information
-//                                    Log.d(TAG, "createUserWithEmail:success");
-//                                    FirebaseUser user = authentication.getCurrentUser();
-//                                    updateUI(user);
-//                                } else {
-//                                    // If sign in fails, display a message to the user.
-//                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-//                                    Toast.makeText(Login.this, "Authentication failed.",
-//                                            Toast.LENGTH_SHORT).show();
-//                                    updateUI(null);
-//                                }
-//
-//                                // ...
-//                            }
-//                        });
-//            }
-//        });
-//    }
 
     @Override
     public void onStart() {

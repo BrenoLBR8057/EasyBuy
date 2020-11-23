@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.easybuy.R;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
@@ -102,6 +106,29 @@ public class ShoppingList extends AppCompatActivity {
             db.collection(COLLECTION).document(products.getTitle()).set(products);
             loadData();
         }
+    }
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itemLogOut:
+                FirebaseAuth.getInstance().signOut();
+                goToLoginActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void goToLoginActivity() {
+        startActivity(new Intent(this, Login.class
+        ));
+        finish();
     }
 
     void loadData(){

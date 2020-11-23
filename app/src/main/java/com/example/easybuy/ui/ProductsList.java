@@ -126,9 +126,7 @@ public class ProductsList extends AppCompatActivity {
                     configureRecycler();
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        QueryDocumentSnapshot documentSnapshot = (QueryDocumentSnapshot) document.getData();
-                        assert documentSnapshot != null;
-                        Products products1 = documentSnapshot.toObject(Products.class);
+                        Products products1 = document.toObject(Products.class);
                         productsList.add(products1);
                     } else {
                         Log.d(TAG, "No such document");
