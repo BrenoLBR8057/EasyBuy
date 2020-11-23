@@ -9,9 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyBuy">
-        <activity android:name=".ui.CreateLogin"></activity>
-        <activity android:name=".ui.adapter.ProductsListAdapter" />
-        <activity android:name=".ui.adapter.ShoppingListAdapter" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.EasyBuy.NoActionBar"></activity>
+        <activity android:name=".ui.CreateLogin" />
         <activity android:name=".ui.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
