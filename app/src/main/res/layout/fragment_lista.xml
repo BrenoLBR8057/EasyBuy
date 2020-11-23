@@ -2,28 +2,29 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShoppingList">
+    tools:context=".Lista">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerShoppingList"
+        android:id="@+id/recyclerViewList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="56dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabShoppingList"
+        android:id="@+id/fabSalvaList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recyclerViewList"
+        app:layout_constraintVertical_bias="0.98" />
 </androidx.constraintlayout.widget.ConstraintLayout>

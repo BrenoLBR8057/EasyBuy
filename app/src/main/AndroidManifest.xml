@@ -9,14 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyBuy">
-        <activity android:name=".ProductsList"></activity>
-        <activity android:name=".ShoppingList">
+        <activity android:name=".ui.CreateLogin"></activity>
+        <activity android:name=".ui.adapter.ProductsListAdapter" />
+        <activity android:name=".ui.adapter.ShoppingListAdapter" />
+        <activity android:name=".ui.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.CreateAndEditList" />
+        <activity android:name=".ui.ProductsList" />
+        <activity android:name=".ui.ShoppingList" />
     </application>
 
 </manifest>
