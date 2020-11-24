@@ -1,17 +1,18 @@
 package com.example.easybuy.ui;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -24,27 +25,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.okhttp.internal.DiskLruCache;
-
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class ProductsList extends AppCompatActivity {
+public class FragmentProductsList extends Fragment {
     private RecyclerView recyclerView;
     private EditText newProduct;
     private EditText quantify;
     private EditText price;
     private EditText title;
-    private boolean isEdition;
     private String getTitle;
     private Button save;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -53,16 +45,40 @@ public class ProductsList extends AppCompatActivity {
     private ProductsListAdapter adapter;
     private String auth = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = auth;
-    
+
+    public FragmentProductsList() {
+    }
+
+    public static FragmentProductsList newInstance(String param1, String param2) {
+        FragmentProductsList fragment = new FragmentProductsList();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_products_list);
-        
-        loadFields();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_products_list, container, false);
+
+
+        newProduct = view.findViewById(R.id.editTextProductProductstList);
+        save = view.findViewById(R.id.btnSave);
+        price = view.findViewById(R.id.editTextPriceProductsList);
+        quantify = view.findViewById(R.id.editTextQuantifyProductsList);
+        title = view.findViewById(R.id.editTextTitleProductsList);
+        recyclerView = view.findViewById(R.id.recyclerProductsList);
+
         buttonClick();
         configureRecycler();
         getProduct();
+
+        return view;
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -79,9 +95,8 @@ public class ProductsList extends AppCompatActivity {
     };
 
     private void configureRecycler() {
-        recyclerView = findViewById(R.id.recyclerProductsList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ProductsListAdapter(getApplicationContext(), productsList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new ProductsListAdapter(getContext(), productsList);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
     }
@@ -105,18 +120,9 @@ public class ProductsList extends AppCompatActivity {
         });
     }
 
-    private void loadFields() {
-        newProduct = findViewById(R.id.editTextProductProductstList);
-        save = findViewById(R.id.btnSave);
-        price = findViewById(R.id.editTextPriceProductsList);
-        quantify = findViewById(R.id.editTextQuantifyProductsList);
-        title = findViewById(R.id.editTextTitleProductsList);
-    }
-
     public void getProduct(){
-        Intent intent = getIntent();
-        Products product = (Products)intent.getSerializableExtra("product");
-        DocumentReference docRef = db.collection(COLLECTION).document(product.getTitle());
+        String products = getContext().toString();
+        DocumentReference docRef = db.collection(COLLECTION).document(products);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

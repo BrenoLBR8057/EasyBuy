@@ -1,36 +1,22 @@
 package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
-import com.example.easybuy.ui.ProductsList;
-import com.example.easybuy.ui.ShoppingList;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class ProductsListAdapter extends RecyclerView.Adapter<ProductsListAdapter.ViewHolder> {
     private Context context;
     private List<Products> productsList;
-    ShoppingList db;
-    private Products products;
 
     public ProductsListAdapter(Context context, List<Products> productsList) {
         this.context = context;

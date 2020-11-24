@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.easybuy.ui.ShoppingList;
-import com.example.easybuy.ui.adapter.ShoppingListAdapter;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 
 public class MyItemTouchHelper extends ItemTouchHelper.Callback {

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.easybuy.MainActivity;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.adapter.ShoppingListAdapter;
@@ -52,6 +55,7 @@ public class FragmentShoppingList extends Fragment {
     private String uid = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = uid;
     private String DOCUMENT;
+    private MainActivity mainActivity = new MainActivity();
 
     public FragmentShoppingList() {}
 
@@ -65,6 +69,7 @@ public class FragmentShoppingList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        buttonClick();
     }
 
     @Override
@@ -75,6 +80,15 @@ public class FragmentShoppingList extends Fragment {
         configureRecycler();
         loadData();
         return view;
+    }
+
+    private void buttonClick() {
+        fabShoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                mainActivity.goToCreateList();
+            }
+        });
     }
 
     void loadFields(View view){
@@ -116,7 +130,7 @@ public class FragmentShoppingList extends Fragment {
         }
     }
 //    public boolean onCreateOptionsMenu(Menu menu){
-//        MenuInflater inflater = getMenuInflater();
+//        MenuInflater inflater = getLayoutInflater();
 //        inflater.inflate(R.menu.menu, menu);
 //        return super.onCreateOptionsMenu(menu);
 //    }

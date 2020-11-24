@@ -1,11 +1,7 @@
 package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,9 +17,7 @@ import android.widget.TextView;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.ProductsList;
-import com.example.easybuy.ui.ShoppingList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
-import com.example.easybuy.ui.main.PlaceholderFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

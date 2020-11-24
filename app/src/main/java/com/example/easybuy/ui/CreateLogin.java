@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.easybuy.MainActivity;
 import com.example.easybuy.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,7 +65,7 @@ public class CreateLogin extends AppCompatActivity {
     }
         private void updateUI(FirebaseUser user) {
             if (user != null) {
-                Intent intent = new Intent(CreateLogin.this, ShoppingList.class);
+                Intent intent = new Intent(CreateLogin.this, MainActivity.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(getApplicationContext(), "Falha ao logar", Toast.LENGTH_SHORT).show();
