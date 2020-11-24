@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,7 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProductsList extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -46,7 +48,6 @@ public class ProductsList extends AppCompatActivity {
     private ProductsListAdapter adapter;
     private String auth = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = auth;
-
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,6 @@ public class ProductsList extends AppCompatActivity {
         setContentView(R.layout.activity_products_list);
         
         loadFields();
-//        generateProducts();
         buttonClick();
         configureRecycler();
         getProduct();
@@ -103,17 +103,6 @@ public class ProductsList extends AppCompatActivity {
         title = findViewById(R.id.editTextTitleProductsList);
     }
 
-//    private void generateProducts(){
-//        Intent intent = getIntent();
-//        Products products = (Products) intent.getSerializableExtra("product");
-//
-//        newProduct.setText(products.getProduct());
-//        title.setText(products.getTitle());
-//        price.setText(products.getPrice().toString());
-//        quantify.setText(products.getQuantify());
-//        configureRecycler();
-//    }
-
     public void getProduct(){
         Intent intent = getIntent();
         Products product = (Products)intent.getSerializableExtra("product");
@@ -123,11 +112,11 @@ public class ProductsList extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    configureRecycler();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Products products1 = document.toObject(Products.class);
-                        productsList.add(products1);
+                        Map products1 = document.getData(DocumentSnapshot.ServerTimestampBehavior.valueOf("Title"));
+
+                        //productsList.add(products1);
+                        configureRecycler();
                     } else {
                         Log.d(TAG, "No such document");
                     }

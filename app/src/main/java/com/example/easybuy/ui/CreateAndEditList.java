@@ -11,8 +11,8 @@ import android.widget.EditText;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
 
-import static com.example.easybuy.ui.ShoppingList.KEY_EDIT_PRODUCT;
-import static com.example.easybuy.ui.ShoppingList.KEY_NEW_PRODUCT;
+import static com.example.easybuy.ui.FragmentShoppingList.KEY_EDIT_PRODUCT;
+import static com.example.easybuy.ui.FragmentShoppingList.KEY_NEW_PRODUCT;
 
 public class CreateAndEditList extends AppCompatActivity {
     private EditText title;
@@ -22,6 +22,7 @@ public class CreateAndEditList extends AppCompatActivity {
     private Button btnSave;
     private Boolean isEditing = false;
     private Products products;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

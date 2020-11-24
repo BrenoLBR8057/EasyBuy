@@ -1,6 +1,11 @@
 package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +23,7 @@ import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.ProductsList;
 import com.example.easybuy.ui.ShoppingList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
+import com.example.easybuy.ui.main.PlaceholderFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,32 +34,32 @@ import java.util.List;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private List<Products> productsList;
-    private Context context;
     private ItemTouchHelper itemTouchHelper;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String uid = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = uid;
     Products products;
 
+    @StringRes
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2};
+    private final Context mContext;
+
     public ShoppingListAdapter(Context context, List<Products> productsList){
-        this.context = context;
         this.productsList = productsList;
+        this.mContext = context;
     }
 
     @NonNull
-    @Override
     public ShoppingListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_shopping_list_adapter, parent, false);
         return new ViewHolder(view);
     }
 
-    @Override
     public void onBindViewHolder(@NonNull ShoppingListAdapter.ViewHolder holder, int position) {
         products = productsList.get(position);
         holder.linkProduct(products);
     }
 
-    @Override
     public int getItemCount() {
         return productsList.size();
     }
@@ -104,7 +110,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
         private TextView shoppingList;
         GestureDetector gestureDetector;
-        ProductsList actProductsList = new ProductsList();
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             shoppingList = itemView.findViewById(R.id.textViewShoppingList);
@@ -129,9 +134,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Products products = productsList.get(getAdapterPosition());
-            Intent intent = new Intent(context, ProductsList.class);
+            Intent intent = new Intent(mContext, ProductsList.class);
             intent.putExtra("product", products);
-            context.startActivity(intent);
+            mContext.startActivity(intent);
 
             return false;
         }

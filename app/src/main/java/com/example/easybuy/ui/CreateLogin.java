@@ -23,7 +23,7 @@ public class CreateLogin extends AppCompatActivity {
     private EditText password;
     private Button btnCreate;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private String TAG = "";
+    private String TAG = "TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

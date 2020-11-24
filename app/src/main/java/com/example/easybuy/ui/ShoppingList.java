@@ -1,151 +1,39 @@
 package com.example.easybuy.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.easybuy.R;
-import com.example.easybuy.model.Products;
-import com.example.easybuy.ui.adapter.ShoppingListAdapter;
-import com.example.easybuy.ui.helper.MyItemTouchHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Inflater;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import com.example.easybuy.ui.main.SectionsPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 
 public class ShoppingList extends AppCompatActivity {
-    private int REQUEST_CODE_NEW_PRODUCT = 1;
-    public static String KEY_NEW_PRODUCT = "NEW_PRODUCT";
-    private int REQUEST_CODE_EDIT_PRODUCT = 2;
-    public static String KEY_EDIT_PRODUCT = "EDIT_PRODUCT";
-    private FloatingActionButton fabShoppingList;
-    private RecyclerView recyclerView;
-    public FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String TAG = "TAG";
-    private List<Products> productsList;
-    private ShoppingListAdapter adapter;
-    private String uid = FirebaseAuth.getInstance().getUid();
-    private String COLLECTION = uid;
-    private String DOCUMENT;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
+       button = findViewById(R.id.btnShoppingList);
 
-        productsList = new ArrayList<>();
-        buttonClick();
-        configureRecycler();
-        loadData();
+       onClick();
     }
 
-    private void configureRecycler() {
-        recyclerView = findViewById(R.id.recyclerShoppingList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ShoppingListAdapter(this, productsList);
-
-        ItemTouchHelper.Callback callback = new MyItemTouchHelper(adapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        adapter.setTouchHelper(itemTouchHelper);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void buttonClick() {
-        fabShoppingList = findViewById(R.id.fabShoppingList);
-
-        fabShoppingList.setOnClickListener(new View.OnClickListener() {
+    private void onClick() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShoppingList.this, CreateAndEditList.class);
-                startActivityForResult(intent, REQUEST_CODE_NEW_PRODUCT);
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_NEW_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_NEW_PRODUCT)){
-            Products products = (Products)data.getSerializableExtra(KEY_NEW_PRODUCT);
-            DOCUMENT = products.getTitle();
-            Map<String, Object> user = new HashMap<>();
-            user.put("Title", products.getTitle());
-            user.put("Product", products.getProduct());
-            user.put("Quantify", products.getQuantify());
-            user.put("Price", products.getPrice());
-
-            db.collection(COLLECTION).document(DOCUMENT).set(user);
-            loadData();
-        }else if(requestCode == REQUEST_CODE_EDIT_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_EDIT_PRODUCT)){
-            Products products = (Products) data.getSerializableExtra(KEY_EDIT_PRODUCT);
-
-            db.collection(COLLECTION).document(products.getTitle()).set(products);
-            loadData();
-        }
-    }
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.itemLogOut:
-                FirebaseAuth.getInstance().signOut();
-                goToLoginActivity();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void goToLoginActivity() {
-        startActivity(new Intent(this, Login.class
-        ));
-        finish();
-    }
-
-    void loadData(){
-        db.collection(COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete (@NonNull Task< QuerySnapshot > task) {
-                if (task.isSuccessful()) {
-                    productsList.clear();
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                        Products products = documentSnapshot.toObject(Products.class);
-                        products.setTitle(documentSnapshot.getId());
-                        productsList.add(products);
-                        configureRecycler();
-                    }
-                } else {
-                    Log.d(TAG, "Erro ao pegar documentos", task.getException());
-                }
+                FragmentShoppingList fragmentA = new FragmentShoppingList();
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.fragment, fragmentA);
+                transaction.commit();
             }
         });
     }
