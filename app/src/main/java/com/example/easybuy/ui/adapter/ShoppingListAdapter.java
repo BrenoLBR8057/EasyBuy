@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
-import com.example.easybuy.ui.ProductsList;
+import com.example.easybuy.ui.FragmentProductsList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,7 +35,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     Products products;
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2};
+    private static final int[] TAB_TITLES = new int[]{R.string.Shopping, R.string.Historic};
     private final Context mContext;
 
     public ShoppingListAdapter(Context context, List<Products> productsList){
@@ -104,6 +104,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
         private TextView shoppingList;
         GestureDetector gestureDetector;
+        FragmentProductsList fragmentProductsList = new FragmentProductsList();
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             shoppingList = itemView.findViewById(R.id.textViewShoppingList);
@@ -128,9 +129,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Products products = productsList.get(getAdapterPosition());
-            Intent intent = new Intent(mContext, ProductsList.class);
-            intent.putExtra("product", products);
-            mContext.startActivity(intent);
+            fragmentProductsList.getProduct(products);
 
             return false;
         }

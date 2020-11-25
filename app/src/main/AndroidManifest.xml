@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.easybuy">
 
     <application
@@ -12,18 +13,21 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.EasyBuy.NoActionBar"></activity>
+            android:theme="@style/Theme.EasyBuy.NoActionBar" />
         <activity android:name=".ui.CreateLogin" />
-        <activity android:name=".ui.adapter.ProductsListAdapter" />
-        <activity android:name=".ui.adapter.ShoppingListAdapter" />
+        <activity android:name=".ui.CreateList" />
+        <activity
+            android:name=".ui.adapter.ProductsListAdapter"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".ui.adapter.ShoppingListAdapter"
+            tools:ignore="Instantiatable" />
         <activity android:name=".ui.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ProductsList" />
     </application>
 
 </manifest>

@@ -46,7 +46,6 @@ public class FragmentShoppingList extends Fragment {
     public static String KEY_NEW_PRODUCT = "NEW_PRODUCT";
     private int REQUEST_CODE_EDIT_PRODUCT = 2;
     public static String KEY_EDIT_PRODUCT = "EDIT_PRODUCT";
-    private FloatingActionButton fabShoppingList;
     private RecyclerView recyclerView;
     public FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String TAG = "TAG";
@@ -55,22 +54,6 @@ public class FragmentShoppingList extends Fragment {
     private String uid = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = uid;
     private String DOCUMENT;
-    private MainActivity mainActivity = new MainActivity();
-
-    public FragmentShoppingList() {}
-
-    public static FragmentShoppingList newInstance(String param1, String param2) {
-        FragmentShoppingList fragment = new FragmentShoppingList();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        buttonClick();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,17 +65,7 @@ public class FragmentShoppingList extends Fragment {
         return view;
     }
 
-    private void buttonClick() {
-        fabShoppingList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                mainActivity.goToCreateList();
-            }
-        });
-    }
-
-    void loadFields(View view){
-        fabShoppingList = view.findViewById(R.id.fabShoppinList);
+    private void loadFields(View view){
         recyclerView = view.findViewById(R.id.recyclerShoppingList);
     }
 
@@ -129,24 +102,8 @@ public class FragmentShoppingList extends Fragment {
             loadData();
         }
     }
-//    public boolean onCreateOptionsMenu(Menu menu){
-//        MenuInflater inflater = getLayoutInflater();
-//        inflater.inflate(R.menu.menu, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.itemLogOut:
-                FirebaseAuth.getInstance().signOut();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    void loadData(){
+    private void loadData(){
         db.collection(COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete (@NonNull Task< QuerySnapshot > task) {
