@@ -2,6 +2,8 @@ package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,14 +35,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     private String uid = FirebaseAuth.getInstance().getUid();
     private String COLLECTION = uid;
     Products products;
-
-    @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.Shopping, R.string.Historic};
-    private final Context mContext;
+    private Context context;
 
     public ShoppingListAdapter(Context context, List<Products> productsList){
         this.productsList = productsList;
-        this.mContext = context;
+        this.context = context;
     }
 
     @NonNull

@@ -1,22 +1,22 @@
 package com.example.easybuy.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
@@ -30,12 +30,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import static android.content.ContentValues.TAG;
 
 public class FragmentProductsList extends Fragment {
     private EditText newProduct;
@@ -43,28 +43,39 @@ public class FragmentProductsList extends Fragment {
     private EditText price;
     private EditText title;
     private String getTitle;
+    private Button save;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<Products> productsList = new ArrayList<>();
-    private String TAG = "TAG";
     private ProductsListAdapter adapter;
-    private String auth = FirebaseAuth.getInstance().getUid();
-    private String COLLECTION = auth;
+    private final String uid = FirebaseAuth.getInstance().getUid();
+    private final String COLLECTION = uid;
+    public RecyclerView recyclerView;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-            View view = inflater.inflate(R.layout.fragment_products_list, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_products_list, container, false);
+        loadFields(view);
+        buttonClick();
+        configureRecycler();
+        loadData();
+        return view;
+    }
 
-            newProduct = view.findViewById(R.id.editTextProductProductstList);
-            price = view.findViewById(R.id.editTextPriceProductsList);
-            quantify = view.findViewById(R.id.editTextQuantifyProductsList);
-            title = view.findViewById(R.id.editTextTitleProductsList);
+    private void loadFields(View view){
+        newProduct = view.findViewById(R.id.editTextProductProductstList);
+        price = view.findViewById(R.id.editTextPriceProductsList);
+        quantify = view.findViewById(R.id.editTextQuantifyProductsList);
+        title = view.findViewById(R.id.editTextTitleProductsList);
+        recyclerView = view.findViewById(R.id.recyclerProductsList);
+        save = view.findViewById(R.id.btnSave);
+    }
 
-            buttonClick(view);
-            configureRecycler(view);
-            loadData();
-
-            return view;
+    private void configureRecycler(){
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new ProductsListAdapter(getContext(), productsList);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(adapter);
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -80,16 +91,7 @@ public class FragmentProductsList extends Fragment {
         }
     };
 
-    private void configureRecycler(View view) {
-        RecyclerView recyclerView = getView().findViewById(R.id.recyclerProductsList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ProductsListAdapter(getContext(), productsList);
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void buttonClick(View view) {
-        Button save = view.findViewById(R.id.btnSave);
+    private void buttonClick() {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +112,7 @@ public class FragmentProductsList extends Fragment {
 
     public void getProduct(Products products){
         DocumentReference docRef = db.collection(COLLECTION).document(products.getTitle());
+        new FragmentProductsList();
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -122,7 +125,6 @@ public class FragmentProductsList extends Fragment {
                         double price = Double.parseDouble(document.get("Price").toString());
                         Products products1 = new Products(getTitle, product, quantify, price);
                         productsList.add(products1);
-                        configureRecycler(getView());
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -144,7 +146,7 @@ public class FragmentProductsList extends Fragment {
                         Products products = documentSnapshot.toObject(Products.class);
                         products.setTitle(documentSnapshot.getId());
                         productsList.add(products);
-                        configureRecycler(getView());
+                        configureRecycler();
                     }
                 } else {
                     Log.d(TAG, "Erro ao pegar documentos", task.getException());

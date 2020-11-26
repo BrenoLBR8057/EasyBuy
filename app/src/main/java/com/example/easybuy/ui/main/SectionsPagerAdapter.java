@@ -1,11 +1,12 @@
 package com.example.easybuy.ui.main;
 
 import android.content.Context;
-import android.content.Intent;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
@@ -31,10 +32,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0 :
                 fragment = new FragmentShoppingList();
                 break;
-
-            case 1 :
+            case 1:
                 fragment = new FragmentProductsList();
-                break;
         }
         return fragment;
     }
