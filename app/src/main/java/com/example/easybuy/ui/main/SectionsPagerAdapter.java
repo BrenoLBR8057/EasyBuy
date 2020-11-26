@@ -2,16 +2,13 @@ package com.example.easybuy.ui.main;
 
 import android.content.Context;
 
-import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.easybuy.R;
-import com.example.easybuy.ui.FragmentProductsList;
 import com.example.easybuy.ui.FragmentShoppingList;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -32,8 +29,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0 :
                 fragment = new FragmentShoppingList();
                 break;
-            case 1:
-                fragment = new FragmentProductsList();
         }
         return fragment;
     }

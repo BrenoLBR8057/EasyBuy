@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.example.easybuy.model.Products;
 import com.example.easybuy.ui.CreateList;
 import com.example.easybuy.ui.Login;
+import com.example.easybuy.ui.ProductsList;
 import com.example.easybuy.ui.adapter.ShoppingListAdapter;
 import com.example.easybuy.ui.helper.MyItemTouchHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -72,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void goToProductsList(Products products){
+        Intent intent = new Intent(MainActivity.this, ProductsList.class);
+        intent.putExtra("product", products);
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -96,9 +102,12 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     productsList.clear();
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                        Products products = documentSnapshot.toObject(Products.class);
-                        products.setTitle(documentSnapshot.getId());
-                        productsList.add(products);
+                        String title = documentSnapshot.getId();
+                        String product = documentSnapshot.get("Product").toString();
+                        int quantify = Integer.parseInt(documentSnapshot.get("Quantify").toString());
+                        Double price = Double.parseDouble(documentSnapshot.get("Price").toString());
+                        Products products1 = new Products(title, product, quantify, price);
+                        productsList.add(products1);
                         configureRecycler();
                     }
                 } else {
@@ -109,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureRecycler() {
+        recyclerView = findViewById(R.id.recyclerProductsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ShoppingListAdapter(this, productsList);
 

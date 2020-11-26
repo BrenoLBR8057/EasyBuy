@@ -1,22 +1,20 @@
 package com.example.easybuy.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
@@ -30,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,7 @@ import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
-public class FragmentProductsList extends Fragment {
+public class ProductsList extends AppCompatActivity {
     private EditText newProduct;
     private EditText quantify;
     private EditText price;
@@ -51,29 +50,29 @@ public class FragmentProductsList extends Fragment {
     private final String COLLECTION = uid;
     public RecyclerView recyclerView;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_products_list, container, false);
-        loadFields(view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loadFields();
         buttonClick();
         configureRecycler();
         loadData();
-        return view;
+        getProduct();
     }
 
-    private void loadFields(View view){
-        newProduct = view.findViewById(R.id.editTextProductProductstList);
-        price = view.findViewById(R.id.editTextPriceProductsList);
-        quantify = view.findViewById(R.id.editTextQuantifyProductsList);
-        title = view.findViewById(R.id.editTextTitleProductsList);
-        recyclerView = view.findViewById(R.id.recyclerProductsList);
-        save = view.findViewById(R.id.btnSave);
+
+    private void loadFields(){
+        newProduct = findViewById(R.id.editTextProductProductstList);
+        price = findViewById(R.id.editTextPriceProductsList);
+        quantify = findViewById(R.id.editTextQuantifyProductsList);
+        title = findViewById(R.id.editTextTitleProductsList);
+        recyclerView = findViewById(R.id.recyclerProductsList);
+        save = findViewById(R.id.btnSave);
     }
 
     private void configureRecycler(){
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ProductsListAdapter(getContext(), productsList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ProductsListAdapter(this, productsList);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
     }
@@ -110,9 +109,10 @@ public class FragmentProductsList extends Fragment {
         });
     }
 
-    public void getProduct(Products products){
-        DocumentReference docRef = db.collection(COLLECTION).document(products.getTitle());
-        new FragmentProductsList();
+    public void getProduct(){
+        Intent intent = getIntent();
+        String products1 = intent.getStringExtra("product");
+        DocumentReference docRef = db.collection(COLLECTION).document(products1);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

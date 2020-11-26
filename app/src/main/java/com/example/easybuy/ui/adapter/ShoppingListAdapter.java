@@ -1,14 +1,10 @@
 package com.example.easybuy.ui.adapter;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.easybuy.MainActivity;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
-import com.example.easybuy.ui.FragmentProductsList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -62,7 +58,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         Products spotA = productsList.get(fromPosition);
         Products spotB = productsList.get(toPosition);
 
-        db.collection(COLLECTION).document(spotA.getProduct()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotA.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentA = task.getResult();
@@ -72,7 +68,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             }
         });
 
-        db.collection(COLLECTION).document(spotB.getProduct()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(COLLECTION).document(spotB.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentB = task.getResult();
@@ -103,7 +99,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
         private TextView shoppingList;
         GestureDetector gestureDetector;
-        FragmentProductsList fragmentProductsList = new FragmentProductsList();
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             shoppingList = itemView.findViewById(R.id.textViewShoppingList);
@@ -128,9 +123,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Products products = productsList.get(getAdapterPosition());
-            fragmentProductsList.getProduct(products);
-
-            return false;
+            MainActivity mainActivity = new MainActivity();
+        mainActivity.goToProductsList(products);
+        return false;
         }
 
         @Override
