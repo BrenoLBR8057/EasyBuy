@@ -47,22 +47,21 @@ public class MainActivity extends AppCompatActivity {
     private String DOCUMENT;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String auth = FirebaseAuth.getInstance().getUid();
-    private String COLLECTION = auth;
-    private List<Products> productsList = new ArrayList<>();
-    private String TAG = "";
     private RecyclerView recyclerView;
     private ShoppingListAdapter adapter;
+    private List<Products> productsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        productsList = new ArrayList<>();
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        fab = findViewById(R.id.fabShoppinList);
+        fab = findViewById(R.id.fabShoppingList);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
             user.put("Quantify", products.getQuantify());
             user.put("Price", products.getPrice());
 
-            db.collection(COLLECTION).document(DOCUMENT).set(user);
+            db.collection(auth).document(DOCUMENT).set(user);
             loadData();
         }
     }
 
     private void loadData(){
-        db.collection(COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection(auth).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete (@NonNull Task< QuerySnapshot > task) {
                 if (task.isSuccessful()) {
@@ -111,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         configureRecycler();
                     }
                 } else {
+                    String TAG = "";
                     Log.d(TAG, "Erro ao pegar documentos", task.getException());
                 }
             }
