@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.easybuy.MainActivity;
 import com.example.easybuy.R;
 import com.example.easybuy.model.Products;
+import com.example.easybuy.ui.ProductsList;
 import com.example.easybuy.ui.adapter.helper.ItemTouchHelperAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -123,8 +125,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Products products = productsList.get(getAdapterPosition());
-            MainActivity mainActivity = new MainActivity();
-        mainActivity.goToProductsList(products);
+            Intent intent = new Intent(context, ProductsList.class);
+            intent.putExtra("product", products);
+            context.startActivity(intent);
         return false;
         }
 

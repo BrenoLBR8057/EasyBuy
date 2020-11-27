@@ -24,7 +24,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
+        Fragment fragment = new FragmentShoppingList();
         switch (position){
             case 0 :
                 fragment = new FragmentShoppingList();

@@ -42,7 +42,6 @@ import java.util.Map;
 import static com.example.easybuy.ui.FragmentShoppingList.KEY_NEW_PRODUCT;
 
 public class MainActivity extends AppCompatActivity {
-    private FloatingActionButton fab;
     private int REQUEST_CODE_NEW_PRODUCT = 1;
     private String DOCUMENT;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        fab = findViewById(R.id.fabShoppingList);
+        FloatingActionButton fab = findViewById(R.id.fabMainActivity);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,24 +71,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void goToProductsList(Products products){
-        Intent intent = new Intent(MainActivity.this, ProductsList.class);
-        intent.putExtra("product", products);
-        startActivity(intent);
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_NEW_PRODUCT && resultCode == RESULT_OK && data.hasExtra(KEY_NEW_PRODUCT)){
             Products products = (Products)data.getSerializableExtra(KEY_NEW_PRODUCT);
             DOCUMENT = products.getTitle();
-            Map<String, Object> user = new HashMap<>();
-            user.put("Title", products.getTitle());
-            user.put("Product", products.getProduct());
-            user.put("Quantify", products.getQuantify());
-            user.put("Price", products.getPrice());
-
-            db.collection(auth).document(DOCUMENT).set(user);
+            if(productsList.size() == 0){
+                int id = 0;
+                Map<String, Object> user = new HashMap<>();
+                user.put("Title" + id, products.getTitle());
+                user.put("Product" + id, products.getProduct());
+                user.put("Quantify" + id, products.getQuantify());
+                user.put("Price" + id, products.getPrice());
+                user.put("Id", id);
+                db.collection(auth).document(DOCUMENT).set(user);
+            }else {
+                int id = productsList.size() - 1;
+                Map<String, Object> user = new HashMap<>();
+                user.put("Title" + id, products.getTitle());
+                user.put("Product" + id, products.getProduct());
+                user.put("Quantify" + id, products.getQuantify());
+                user.put("Price" + id, products.getPrice());
+                user.put("Id", id);
+                db.collection(auth).document(DOCUMENT).set(user);
+            }
             loadData();
         }
     }
@@ -100,11 +106,12 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete (@NonNull Task< QuerySnapshot > task) {
                 if (task.isSuccessful()) {
                     productsList.clear();
+                    int i = 0;
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                         String title = documentSnapshot.getId();
-                        String product = documentSnapshot.get("Product").toString();
-                        int quantify = Integer.parseInt(documentSnapshot.get("Quantify").toString());
-                        Double price = Double.parseDouble(documentSnapshot.get("Price").toString());
+                        String product = documentSnapshot.get("Product" + i).toString();
+                        int quantify = Integer.parseInt(documentSnapshot.get("Quantify" + i).toString());
+                        Double price = Double.parseDouble(documentSnapshot.get("Price" + i).toString());
                         Products products1 = new Products(title, product, quantify, price);
                         productsList.add(products1);
                         configureRecycler();
